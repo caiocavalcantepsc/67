@@ -429,27 +429,27 @@ function startPeriodicGlitches() {
     // Glitch normal a cada 45 segundos
     setInterval(() => {
         normalGlitch();
-    }, 45000);
+    }, 10000);
     
     // Glitch intenso a cada 45 segundos (alternando com o normal)
     setInterval(() => {
         intenseGlitch();
-    }, 45000);
+    }, 25000);
     
     // Unauthorized overlay a cada 90 segundos (menos frequente)
     setInterval(() => {
         showUnauthorized();
-    }, 90000);
+    }, 45000);
     
     // Corrupção de texto a cada 45 segundos
     setInterval(() => {
         corruptRandomText();
-    }, 45000);
+    }, 60000);
     
     // Glitch em links do nav a cada 45 segundos
     setInterval(() => {
         glitchNavLinks();
-    }, 45000);
+    }, 41000);
     
     // Também adicionar os logs existentes
     setTimeout(() => {
