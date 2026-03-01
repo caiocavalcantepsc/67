@@ -1,9 +1,10 @@
+/* CSS EMBUTIDO - PALETA: #000 (Preto), #FF0000 (Vermelho), #FFF (Branco) */
         
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Courier New', Courier, monospace; 
+            font-family: 'Courier New', Courier, monospace; /* Terminal Estética */
         }
 
         body {
@@ -16,6 +17,7 @@
             position: relative;
         }
 
+        /* GLITCH EFFECT OVERLAY - MAIS INTENSO */
         body.glitch::before {
             content: " ";
             position: absolute;
@@ -811,4 +813,3 @@
     80% { transform: skew(-3deg); color: #FFFF00; }
     100% { transform: skew(0deg); color: #FF0000; }
 }
-
