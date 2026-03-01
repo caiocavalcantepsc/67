@@ -1,8 +1,4 @@
-/* =========================
-           BOOT SEQUENCE - WINDOWS 95 STYLE
-        ========================= */
         (function() {
-            // Boot sequence lines exactly as specified
             const bootLines = [
                 "LEGACY TERMINAL v2.3.17",
                 "BOOT SEQUENCE INITIATED",
@@ -17,7 +13,6 @@
                 "MATCH FOUND"
             ];
             
-            // Get all boot line elements
             const bootLineElements = [
                 document.getElementById("bootLine1"),
                 document.getElementById("bootLine2"),
@@ -39,7 +34,6 @@
             let currentLineIndex = 0;
             let currentCharIndex = 0;
             
-            // Clear all boot lines initially
             for(let i = 0; i < bootLineElements.length; i++) {
                 if(bootLineElements[i]) {
                     bootLineElements[i].textContent = "";
@@ -47,7 +41,6 @@
             }
             
             function typeNextCharacter() {
-                // If we've shown all lines, stop typing
                 if (currentLineIndex >= bootLines.length) {
                     return;
                 }
@@ -57,7 +50,6 @@
                 
                 if (!currentElement) return;
                 
-                // If it's an empty line, just add a blank line and move to next immediately
                 if (currentLine === "") {
                     currentElement.textContent = " ";
                     currentLineIndex++;
@@ -66,20 +58,16 @@
                     return;
                 }
                 
-                // Type current line character by character
                 if (currentCharIndex < currentLine.length) {
                     currentElement.textContent += currentLine[currentCharIndex];
                     currentCharIndex++;
                     
-                    // Random typing speed (20-80ms) for authentic feel
                     const nextDelay = Math.random() * 60 + 20;
                     setTimeout(typeNextCharacter, nextDelay);
                 } else {
-                    // Move to next line
                     currentLineIndex++;
                     currentCharIndex = 0;
                     
-                    // Update progress text based on what's been typed
                     if (currentLineIndex === 2) {
                         progressText.textContent = "BIOS version check...";
                     } else if (currentLineIndex === 5) {
@@ -94,10 +82,8 @@
                 }
             }
             
-            // Start typing after a short delay
             setTimeout(typeNextCharacter, 500);
             
-            // Em vez de fade out, mostra tela de crash com interferência
             setTimeout(function() {
                 // Aplica animação de crash no boot screen
                 bootScreen.classList.add("boot-crash");
@@ -292,9 +278,6 @@ function showPage(pageId, element){
     }
 }
 
-/* =========================
-   GLITCHES PERIÓDICOS - A CADA 45 SEGUNDOS
-========================= */
 function startPeriodicGlitches() {
     const body = document.body;
     const unauthorizedOverlay = document.getElementById("unauthorizedOverlay");
@@ -376,12 +359,10 @@ function startPeriodicGlitches() {
         }, 200);
     }
     
-    // Função para unauthorized overlay
     function showUnauthorized() {
         body.classList.add('glitch-intense');
         staticOverlay.classList.add('active');
         
-        // Show unauthorized overlay
         if (unauthorizedOverlay) {
             unauthorizedOverlay.style.display = 'flex';
         }
@@ -423,35 +404,27 @@ function startPeriodicGlitches() {
             }, 200);
         }
     }
-    
-    // Configurar intervalos para cada tipo de glitch (45 segundos)
-    
-    // Glitch normal a cada 45 segundos
+        
     setInterval(() => {
         normalGlitch();
     }, 10000);
     
-    // Glitch intenso a cada 45 segundos (alternando com o normal)
     setInterval(() => {
         intenseGlitch();
     }, 25000);
     
-    // Unauthorized overlay a cada 90 segundos (menos frequente)
     setInterval(() => {
         showUnauthorized();
     }, 45000);
     
-    // Corrupção de texto a cada 45 segundos
     setInterval(() => {
         corruptRandomText();
     }, 60000);
     
-    // Glitch em links do nav a cada 45 segundos
     setInterval(() => {
         glitchNavLinks();
     }, 41000);
     
-    // Também adicionar os logs existentes
     setTimeout(() => {
         const lockTerminal = document.getElementById("lockTerminal");
         if(lockTerminal) {
@@ -558,3 +531,4 @@ document.addEventListener("DOMContentLoaded",()=>{
     console.log("NOC_TERMINAL: Legacy boot sequence complete. System time may be inaccurate.");
 
 });
+
