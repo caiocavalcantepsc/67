@@ -1,0 +1,1820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TERMINAL | NETWORK OPERATIONS CENTER</title>
+    <style>
+        /* CSS EMBUTIDO - PALETA: #000 (Preto), #FF0000 (Vermelho), #FFF (Branco) */
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', Courier, monospace; /* Terminal Estética */
+        }
+
+        body {
+            background-color: #000;
+            color: #FFF;
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+            border: 2px solid #FF0000;
+            position: relative;
+        }
+
+        /* GLITCH EFFECT OVERLAY - MAIS INTENSO */
+        body.glitch::before {
+            content: " ";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(255,0,0,0.3) 0%, rgba(0,0,0,0.9) 50%, rgba(255,0,0,0.3) 100%);
+            z-index: 9998;
+            pointer-events: none;
+            animation: glitchOverlay 0.05s infinite;
+            mix-blend-mode: multiply;
+        }
+
+        body.glitch::after {
+            content: " ";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(0deg, rgba(255,0,0,0.2) 0px, rgba(0,0,0,0.9) 2px, transparent 3px);
+            z-index: 9997;
+            pointer-events: none;
+            animation: scanline 0.1s linear infinite;
+        }
+
+        /* GLITCH MAIS AGRESSIVO */
+        body.glitch-intense::before {
+            content: " ";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(255,0,0,0.6) 0%, rgba(0,0,0,0.9) 50%, rgba(255,0,0,0.6) 100%);
+            z-index: 9999;
+            pointer-events: none;
+            animation: glitchIntense 0.02s infinite;
+            mix-blend-mode: multiply;
+        }
+
+        body.glitch-intense::after {
+            content: " ";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(45deg, rgba(255,0,0,0.4) 0px, rgba(0,255,0,0.2) 2px, rgba(0,0,255,0.2) 4px, transparent 6px);
+            z-index: 9999;
+            pointer-events: none;
+            animation: glitchShift 0.03s infinite;
+        }
+
+        @keyframes glitchOverlay {
+            0% { opacity: 0.5; transform: translate(0); }
+            10% { opacity: 0.8; transform: translate(-4px, 2px); }
+            20% { opacity: 0.5; transform: translate(4px, -2px); }
+            30% { opacity: 0.9; transform: translate(-3px, 3px); }
+            40% { opacity: 0.5; transform: translate(3px, -3px); }
+            50% { opacity: 0.7; transform: translate(-5px, 1px); }
+            60% { opacity: 0.5; transform: translate(5px, -1px); }
+            70% { opacity: 0.8; transform: translate(-2px, 4px); }
+            80% { opacity: 0.5; transform: translate(2px, -4px); }
+            90% { opacity: 0.6; transform: translate(-1px, 1px); }
+            100% { opacity: 0.5; transform: translate(0); }
+        }
+
+        @keyframes glitchIntense {
+            0% { opacity: 0.7; transform: translate(0) scale(1); filter: hue-rotate(0deg); }
+            20% { opacity: 1; transform: translate(-10px, 5px) scale(1.02); filter: hue-rotate(90deg); }
+            40% { opacity: 0.7; transform: translate(10px, -5px) scale(0.98); filter: hue-rotate(180deg); }
+            60% { opacity: 1; transform: translate(-8px, 8px) scale(1.01); filter: hue-rotate(270deg); }
+            80% { opacity: 0.7; transform: translate(8px, -8px) scale(0.99); filter: hue-rotate(360deg); }
+            100% { opacity: 0.7; transform: translate(0) scale(1); filter: hue-rotate(0deg); }
+        }
+
+        @keyframes glitchShift {
+            0% { background-position: 0 0; }
+            100% { background-position: 20px 20px; }
+        }
+
+        @keyframes scanline {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 20px; }
+        }
+
+        /* INTERFERÊNCIA - ESTÁTICA (agora apenas durante glitches) */
+        .static-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-radial-gradient(circle at 50% 50%, rgba(255,0,0,0.1) 0px, transparent 2px);
+            z-index: 9996;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.1s;
+        }
+
+        .static-overlay.active {
+            animation: staticFlicker 0.1s infinite;
+        }
+
+        @keyframes staticFlicker {
+            0% { opacity: 0.1; }
+            25% { opacity: 0.3; }
+            50% { opacity: 0.1; }
+            75% { opacity: 0.4; }
+            100% { opacity: 0.1; }
+        }
+
+        /* TELA DE TRAVAMENTO/INTERFERÊNCIA */
+        .crash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #FF0000;
+            font-family: 'Courier New', Courier, monospace;
+            border: 10px solid #FF0000;
+            animation: crashPulse 0.1s infinite;
+        }
+
+        @keyframes crashPulse {
+            0% { border-color: #FF0000; opacity: 1; }
+            25% { border-color: #00FF00; opacity: 0.9; transform: skew(1deg); }
+            50% { border-color: #0000FF; opacity: 1; transform: skew(-1deg); }
+            75% { border-color: #FF00FF; opacity: 0.8; transform: skew(2deg); }
+            100% { border-color: #FF0000; opacity: 1; transform: skew(0deg); }
+        }
+
+        .crash-text {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 30px;
+            animation: textFlicker 0.05s infinite;
+            text-shadow: 5px 5px 0 #00FF00, -5px -5px 0 #0000FF;
+        }
+
+        @keyframes textFlicker {
+            0% { opacity: 1; text-shadow: 5px 5px 0 #00FF00, -5px -5px 0 #0000FF; }
+            25% { opacity: 0.8; text-shadow: -5px 5px 0 #FF0000, 5px -5px 0 #0000FF; }
+            50% { opacity: 1; text-shadow: 5px -5px 0 #00FF00, -5px 5px 0 #FF0000; }
+            75% { opacity: 0.7; text-shadow: -5px -5px 0 #0000FF, 5px 5px 0 #FF0000; }
+            100% { opacity: 1; text-shadow: 5px 5px 0 #00FF00, -5px -5px 0 #0000FF; }
+        }
+
+        .crash-sub {
+            font-size: 1.2rem;
+            color: #660000;
+            margin-top: 50px;
+            animation: subFlicker 0.2s infinite;
+        }
+
+        @keyframes subFlicker {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+
+        .crash-dump {
+            margin-top: 30px;
+            color: #330000;
+            font-size: 0.8rem;
+            white-space: pre;
+            border-top: 1px solid #330000;
+            padding-top: 20px;
+            width: 80%;
+            text-align: center;
+            animation: dumpScroll 0.5s linear infinite;
+        }
+
+        @keyframes dumpScroll {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 20px; }
+        }
+
+        /* ERROR MESSAGES - MAIS ASSUSTADORES */
+        .error-popup {
+            position: fixed;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #000;
+            border: 5px solid #FF0000;
+            color: #FF0000;
+            padding: 25px;
+            z-index: 10000;
+            font-size: 1.5rem;
+            text-align: center;
+            box-shadow: 0 0 50px rgba(255,0,0,0.8);
+            animation: errorTerror 0.1s infinite;
+            max-width: 90%;
+            pointer-events: none;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        @keyframes errorTerror {
+            0% { opacity: 1; border-color: #FF0000; transform: translateX(-50%) scale(1); }
+            20% { opacity: 0.8; border-color: #00FF00; transform: translateX(-48%) scale(1.02) skew(2deg); }
+            40% { opacity: 1; border-color: #0000FF; transform: translateX(-52%) scale(0.98) skew(-2deg); }
+            60% { opacity: 0.7; border-color: #FF00FF; transform: translateX(-50%) scale(1.01) skew(1deg); }
+            80% { opacity: 1; border-color: #FFFF00; transform: translateX(-50%) scale(0.99) skew(-1deg); }
+            100% { opacity: 1; border-color: #FF0000; transform: translateX(-50%) scale(1); }
+        }
+
+        /* CORRUPTED TEXT - MAIS INTENSO */
+        .corrupted {
+            position: relative;
+            display: inline-block;
+        }
+
+        .corrupted::before,
+        .corrupted::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+        }
+
+        .corrupted::before {
+            color: #ff0000;
+            z-index: -1;
+            animation: glitchText 0.05s infinite;
+        }
+
+        .corrupted::after {
+            color: #00ff00;
+            z-index: -2;
+            animation: glitchText2 0.03s infinite;
+        }
+
+        @keyframes glitchText {
+            0% { transform: translate(0); }
+            20% { transform: translate(-5px, 2px); }
+            40% { transform: translate(5px, -2px); }
+            60% { transform: translate(-3px, 4px); }
+            80% { transform: translate(3px, -4px); }
+            100% { transform: translate(0); }
+        }
+
+        @keyframes glitchText2 {
+            0% { transform: translate(0); }
+            20% { transform: translate(4px, -2px); }
+            40% { transform: translate(-4px, 2px); }
+            60% { transform: translate(2px, -4px); }
+            80% { transform: translate(-2px, 4px); }
+            100% { transform: translate(0); }
+        }
+
+        /* BARRA LATERAL */
+        nav {
+            width: 300px;
+            border-right: 2px solid #FF0000;
+            background-color: #000;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        nav::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(0deg, rgba(255,0,0,0.02) 0px, transparent 2px);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        nav h1 {
+            color: #FF0000;
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            text-align: center;
+            border-bottom: 1px solid #FF0000;
+            padding-bottom: 10px;
+            position: relative;
+        }
+
+        nav ul {
+            list-style: none;
+            position: relative;
+            z-index: 2;
+        }
+
+        nav ul li {
+            margin-bottom: 15px;
+        }
+
+        nav ul li a {
+            color: #FFF;
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: block;
+            padding: 10px;
+            border: 1px solid transparent;
+            transition: all 0.3s;
+        }
+
+        nav ul li a:hover {
+            background-color: #FF0000;
+            color: #000;
+        }
+
+        nav ul li a.active {
+            border: 1px solid #FF0000;
+            color: #FF0000;
+        }
+
+        /* PRINCIPAL */
+        main {
+            flex-grow: 1;
+            padding: 50px;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        /* ESTILIZAÇÃO DAS TAGS DE TEXTO */
+        .content-header h2 {
+            color: #FF0000;
+            font-size: 2rem;
+            text-transform: uppercase;
+            margin-bottom: 25px;
+            border-left: 5px solid #FF0000;
+            padding-left: 15px;
+        }
+
+        .content-body {
+            line-height: 1.6;
+            font-size: 1.1rem;
+            max-width: 800px;
+        }
+
+        .content-body p {
+            margin-bottom: 20px;
+        }
+
+        .content-body ul {
+            margin-left: 20px;
+            margin-bottom: 20px;
+            color: #FF0000; /* Destaque nas listas */
+        }
+
+        .content-body li {
+            margin-bottom: 10px;
+        }
+
+        .content-body strong {
+            color: #FF0000;
+            text-transform: uppercase;
+        }
+
+        /* ESTILO PARA PÁGINA FINAL*/
+        .status-terminal {
+            background-color: #000;
+            border: 1px solid #FF0000;
+            padding: 20px;
+            margin-top: 30px;
+            color: #FF0000;
+        }
+
+        .footer-tag {
+            margin-top: 50px;
+            font-style: italic;
+            border-top: 1px solid #333;
+            padding-top: 20px;
+            color: #666;
+        }
+
+        /* EFEITO DE SCANLINE*/
+        body::before {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 10;
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+        }
+
+        .log-entry {
+    opacity: 0;
+    animation: fadeInLog 0.25s ease-out forwards;
+}
+
+@keyframes fadeInLog {
+    from { opacity: 0; transform: translateY(2px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* BOTÃO ARCHIVE ACCESS */
+
+.archive-btn {
+    position: relative;
+    margin-top: 25px;
+    background-color: #000;
+    color: #FF0000;
+    border: 1px solid #FF0000;
+    padding: 12px 18px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    display: none;
+    transition: all 0.2s ease;
+}
+
+.archive-btn:hover {
+    background-color: #FF0000;
+    color: #000;
+}
+
+.archive-btn.hidden {
+    display: none !important;
+}
+
+.archive-btn.visible {
+    display: block;
+}
+/* MIRROR BOX */
+
+.mirror-box {
+    border: 1px solid #FF0000;
+    padding: 25px;
+    margin-top: 30px;
+    max-width: 500px;
+    background: #000;
+    position: relative;
+}
+
+.mirror-title {
+    color: #FF0000;
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+}
+
+.mirror-sub {
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 25px;
+}
+
+.mirror-btn {
+    background: #000;
+    color: #FF0000;
+    border: 1px solid #FF0000;
+    padding: 12px 18px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all .2s ease;
+}
+
+.mirror-btn:hover {
+    background: #FF0000;
+    color: #000;
+}
+
+/* TEXTO QUE APARECE NO HOVER */
+
+.mirror-hint {
+    margin-top: 20px;
+    color: #555;
+    font-size: 0.8rem;
+    opacity: 0;
+    transition: opacity .4s ease;
+}
+
+.mirror-box:hover .mirror-hint {
+    opacity: 1;
+}
+
+/* LOGIN FAKE */
+
+.fake-login {
+    border: 1px solid #FF0000;
+    padding: 25px;
+    margin-top: 40px;
+    max-width: 500px;
+    background: #000;
+}
+
+.login-sub {
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+}
+
+.auth-btn {
+    background: #000;
+    color: #FF0000;
+    border: 1px solid #FF0000;
+    padding: 12px 18px;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.auth-btn:hover {
+    background: #FF0000;
+    color: #000;
+}
+
+.login-field {
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.login-field label {
+    font-size: 0.7rem;
+    color: #FF0000;
+}
+
+.login-field input {
+    background: #000;
+    border: 1px solid #FF0000;
+    color: #FFF;
+    padding: 8px;
+    font-family: inherit;
+    outline: none;
+}
+
+.login-field input:focus {
+    box-shadow: 0 0 6px #FF0000;
+}
+
+.login-status {
+    margin-top: 12px;
+    font-size: 0.8rem;
+    color: #FF0000;
+    min-height: 18px;
+}
+
+/* ATMOSPHERIC ADDITIONS */
+.system-init-line {
+    color: #333;
+    font-size: 0.7rem;
+    margin-bottom: 8px;
+    border-left: 2px solid #330000;
+    padding-left: 8px;
+}
+
+.archive-marker {
+    color: #550000;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 15px;
+}
+
+.revision-note {
+    color: #442222;
+    font-size: 0.7rem;
+    margin-top: 25px;
+    border-top: 1px dashed #330000;
+    padding-top: 10px;
+}
+
+.instance-log {
+    color: #833;
+    font-size: 0.8rem;
+    margin: 15px 0;
+    padding: 8px;
+    border-left: 3px solid #440000;
+    background: rgba(100,0,0,0.05);
+}
+
+.inconsistency-note {
+    color: #660000;
+    font-size: 0.7rem;
+    text-decoration: line-through 1px #330000;
+    opacity: 0.7;
+}
+
+.legacy-warning {
+    color: #440000;
+    font-size: 0.7rem;
+    margin-top: 10px;
+    font-style: italic;
+}
+
+/* BOOT SCREEN - WINDOWS 95/98 STYLE */
+.boot-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    color: #FFF;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Courier New', Courier, monospace;
+    border: 4px solid #FF0000;
+    box-shadow: inset 0 0 30px rgba(255,0,0,0.2);
+}
+
+.boot-content {
+    width: 600px;
+    max-width: 90%;
+    border: 2px solid #FF0000;
+    background-color: #000;
+    padding: 30px;
+    box-shadow: 10px 10px 0 rgba(255,0,0,0.1);
+}
+
+.boot-line {
+    color: #bb0000;
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+    min-height: 30px;
+    white-space: pre-wrap;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+.boot-progress {
+    margin-top: 25px;
+    color: #333;
+    font-size: 0.9rem;
+}
+
+.boot-progress-bar {
+    width: 100%;
+    height: 20px;
+    border: 2px solid #FF0000;
+    margin-top: 8px;
+    position: relative;
+    overflow: hidden;
+}
+
+.boot-progress-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0%;
+    background-color: #FF0000;
+    animation: progressFill 4s ease-out forwards;
+    animation-delay: 11s;
+}
+
+@keyframes progressFill {
+    0% { width: 0%; }
+    100% { width: 100%; }
+}
+
+/* REMOVIDO O FADE OUT - AGORA TERMINA COM TRAVAMENTO */
+.boot-crash {
+    animation: crashTransition 0.5s forwards;
+}
+
+@keyframes crashTransition {
+    0% { 
+        opacity: 1; 
+        transform: scale(1) skew(0deg);
+        filter: hue-rotate(0deg);
+    }
+    20% { 
+        opacity: 0.9; 
+        transform: scale(1.02) skew(2deg);
+        filter: hue-rotate(90deg);
+    }
+    40% { 
+        opacity: 0.8; 
+        transform: scale(0.98) skew(-2deg);
+        filter: hue-rotate(180deg);
+    }
+    60% { 
+        opacity: 0.7; 
+        transform: scale(1.03) skew(3deg);
+        filter: hue-rotate(270deg);
+    }
+    80% { 
+        opacity: 0.5; 
+        transform: scale(0.97) skew(-3deg);
+        filter: hue-rotate(360deg);
+    }
+    100% { 
+        opacity: 0; 
+        visibility: hidden;
+        transform: scale(0) skew(10deg);
+        filter: hue-rotate(720deg);
+    }
+}
+
+.boot-sub {
+    color: #440000;
+    font-size: 0.8rem;
+    margin-top: 10px;
+}
+
+/* WINDOWS 95 STYLE DOTS */
+.boot-dots {
+    display: inline-block;
+    width: 20px;
+    text-align: left;
+}
+
+/* HARDWARE INFORMATION */
+.boot-hardware {
+    margin-top: 20px;
+    color: #222;
+    font-size: 0.7rem;
+    border-top: 1px solid #330000;
+    padding-top: 15px;
+    text-align: center;
+}
+
+/* UNAUTHORIZED ACCESS WARNING - MAIS INTENSO */
+.unauthorized-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.95);
+    z-index: 10001;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    color: #FF0000;
+    font-size: 2.5rem;
+    text-align: center;
+    border: 15px solid #FF0000;
+    animation: warningIntense 0.1s infinite;
+    text-shadow: 3px 3px 0 #00FF00, -3px -3px 0 #0000FF;
+}
+
+@keyframes warningIntense {
+    0% { border-color: #FF0000; opacity: 1; }
+    20% { border-color: #00FF00; opacity: 0.9; transform: skew(2deg); }
+    40% { border-color: #0000FF; opacity: 1; transform: skew(-2deg); }
+    60% { border-color: #FF00FF; opacity: 0.8; transform: skew(3deg); }
+    80% { border-color: #FFFF00; opacity: 1; transform: skew(-3deg); }
+    100% { border-color: #FF0000; opacity: 1; transform: skew(0deg); }
+}
+
+.unauthorized-sub {
+    font-size: 1.2rem;
+    color: #990000;
+    margin-top: 20px;
+    animation: subPulse 0.2s infinite;
+}
+
+@keyframes subPulse {
+    0% { opacity: 0.5; }
+    50% { opacity: 1; }
+    100% { opacity: 0.5; }
+}
+
+/* GLITCH TEXT CLASS - MAIS INTENSO */
+.glitch-text {
+    animation: textGlitchIntense 0.05s infinite;
+    color: #FF0000;
+}
+
+@keyframes textGlitchIntense {
+    0% { transform: skew(0deg); color: #FF0000; }
+    20% { transform: skew(5deg); color: #00FF00; }
+    40% { transform: skew(-5deg); color: #0000FF; }
+    60% { transform: skew(3deg); color: #FF00FF; }
+    80% { transform: skew(-3deg); color: #FFFF00; }
+    100% { transform: skew(0deg); color: #FF0000; }
+}
+    </style>
+</head>
+
+<body>
+    <!-- STATIC OVERLAY (agora controlado por JS) -->
+    <div id="staticOverlay" class="static-overlay"></div>
+
+    <!-- UNAUTHORIZED ACCESS OVERLAY -->
+    <div id="unauthorizedOverlay" class="unauthorized-overlay" style="display: none;">
+        <div>UNAUTHORIZED ACCESS DETECTED</div>
+        <div class="unauthorized-sub">SESSION LOGGED • BEHAVIORAL PATTERN RECORDED</div>
+        <div class="unauthorized-sub" style="font-size: 0.8rem; margin-top: 50px;">> This terminal is not intended for external viewing</div>
+    </div>
+
+    <!-- BOOT SCREEN - WINDOWS 95 STYLE -->
+    <div id="bootScreen" class="boot-screen">
+        <div class="boot-content">
+            <div id="bootLine1" class="boot-line"></div>
+            <div id="bootLine2" class="boot-line"></div>
+            <div id="bootLine3" class="boot-line"></div>
+            <div id="bootLine4" class="boot-line"></div>
+            <div id="bootLine5" class="boot-line"></div>
+            <div id="bootLine6" class="boot-line"></div>
+            <div id="bootLine7" class="boot-line"></div>
+            <div id="bootLine8" class="boot-line"></div>
+            <div id="bootLine9" class="boot-line"></div>
+            <div id="bootLine10" class="boot-line"></div>
+            <div id="bootLine11" class="boot-line"></div>
+            
+            <div class="boot-progress">
+                <div id="bootProgressText">Starting Windows 95-like boot sequence...</div>
+                <div class="boot-progress-bar">
+                    <div class="boot-progress-fill"></div>
+                </div>
+            </div>
+            
+            <div class="boot-hardware">
+                Processor: Legacy x86 | Memory: 640K Base | Extended: 15360K<br>
+                BIOS Version: SIGKTORS/2017 | CMOS: Invalid Checksum
+            </div>
+        </div>
+    </div>
+
+    <!-- CRASH SCREEN (aparece depois do boot) -->
+    <div id="crashScreen" class="crash-screen" style="display: none;">
+        <div class="crash-text">SYSTEM CRASH</div>
+        <div class="crash-sub">MEMORY CORRUPTION • UNRECOVERABLE ERROR</div>
+        <div class="crash-dump">
+            > DUMPING PHYSICAL MEMORY...
+            > 0x7F34B2: ACCESS_VIOLATION
+            > 0x8A45C1: PAGE_FAULT_IN_NONPAGED_AREA
+            > 0x9D67E3: KERNEL_SECURITY_CHECK_FAILURE
+            > Attempting to recover... FAILED
+            > This terminal was not designed for external access
+        </div>
+    </div>
+
+    <!-- SYSTEM INITIALIZATION SEQUENCE - LEGACY TERMINAL -->
+    <div style="position: fixed; bottom: 5px; right: 10px; color: #330000; font-size: 0.6rem; z-index: 100; pointer-events: none;">
+        > NOC_TERMINAL v0.8.4 [LEGACY MODE]
+    </div>
+    
+    <nav>
+        <h1>SIGKTORS_INTERNAL_NODE</h1>
+        <!-- ARCHIVE RECOVERY MARKER - IMPLIED SYSTEM AGE -->
+        <div class="archive-marker">[ARCHIVE: 2017-2023]</div>
+        <ul>
+            <li><a href="#" onclick="showPage('p1', this)" class="active">01_OVERVIEW</a></li>
+            <li><a href="#" onclick="showPage('p2', this)">02_SELECTION</a></li>
+            <li><a href="#" onclick="showPage('p3', this)">03_ASSEMBLY</a></li>
+            <li><a href="#" onclick="showPage('p4', this)">04_PERFORMANCE</a></li>
+            <li><a href="#" onclick="showPage('p5', this)">05_COMPLIANCE</a></li>
+            <li><a href="#" onclick="showPage('p6', this)">06_EXTRACTION</a></li>
+            <li><a href="#" onclick="showPage('p7', this)">07_POST_STATE</a></li>
+            <li><a href="#" onclick="showPage('p8', this)">08_STORAGE</a></li>
+            <li><a href="#" onclick="showPage('p9', this)">LOCK_STATUS</a></li>
+        </ul>
+        <!-- LEGACY SYSTEM INDICATOR -->
+        <div style="margin-top: auto; color: #330000; font-size: 0.65rem; border-top: 1px solid #220000; padding-top: 15px;">
+            NODE ID: 00-SIG-KTORS<br>
+            LAST SYNC: 2023.11.02<br>
+            HEARTBEAT: OFFLINE
+        </div>
+    </nav>
+
+    <main id="content">
+        <section id="p1" class="page">
+            <div class="content-header"><h2>Continuity Through Cognitive Advancement</h2></div>
+            <div class="content-body">
+                <!-- SYSTEM INIT LOG -->
+                <div class="system-init-line">> LOADING CORE DIRECTIVES [ARCHIVE: 2017.03.14]</div>
+                <p>Our organization is dedicated to the preservation and optimization of human cognitive continuity. In an era where digital surveillance infrastructures and deep packet inspection threaten the very essence of privacy, 
+                we provide the ultimate sanctuary for the human mind. Through interdisciplinary research in neuroscience, data architecture, and behavioral integration, 
+                we have developed protocols capable of extending the informational essence of the individual beyond traditional biological constraints.</p>
+                
+                <p>We operate under the fundamental belief that identity is not limited to organic form. As demonstrated in our foundational research on Structural Obfuscation, 
+                    identity is essentially a complex, non-executable logic. It is a structure. And if a structure can be mapped into the inherent metadata fields of a secure environment , 
+                    that structure can be preserved indefinitely, 
+                    far removed from the "visibility trap" of the physical world.</p>
+                    
+                    <p>Our mission is to achieve a state of Denial by Banalization for the human soul. 
+                        By repurposing the "noise" of biological systems and utilizing advanced mapping into secured architectures ,
+                         we ensure that our participants remain unobserved in an increasingly transparent world.</p>
+                         
+                    <p>We do not merely store data; we relocate existence.</p>
+                    
+                    <!-- ARCHIVE NOTE - IMPLIED AGE -->
+                    <div class="revision-note">--- REV: 2.4.1 // LAST ACCESSED: 2024.01.09 [READ-ONLY] ---</div>
+            </div>
+
+        </section>
+
+        <section id="p2" class="page" style="display:none;">
+            <div class="content-header"><h2>Participant Evaluation Framework</h2></div>
+            <div class="content-body">
+                <!-- PROTOCOL NOTE -->
+                <div class="system-init-line">> PROTOCOL: PHASE_I_SCREENING v3.2</div>
+                <p>The identification of suitable candidates for cognitive relocation is a rigorous process governed by advanced analytical profiling systems. We do not seek mere volunteers; we identify high-performance cognitive structures that exhibit the necessary resilience for a Phase III transition.</p>
+            <p>Our proprietary selection algorithms scan global network traffic to detect individuals who operate "below the fold" of standard digital behavior. We look for those who naturally utilize structural logic to navigate complex information environments. Evaluation parameters for potential candidates include:</p>
+            <p>1º Cognitive Elasticity: The ability to adapt to non-linear information architectures without structural fragmentation.</p>
+            <p>2º Pattern Recognition Threshold: A heightened capacity to identify signal within noise, specifically regarding metadata anomalies.</p>
+            <p>3º Emotional Resistance Stability: The maintenance of neural coherence when faced with high-stress environmental stressors.</p>
+            <p>4º Neural Coherence under Stress: The ability to maintain a stable "Logic Layer" during the suppression of peripheral sensory input.</p>
+            <p>Only individuals meeting Phase II resilience standards—those whose mental architecture proves to be as robust as the systems they study—are invited for direct engagement. Selection is strictly merit-based and fully aligned with our long-term research objectives.</p>
+            <p>By the time a candidate is contacted, their cognitive profile has already been mapped against our compatibility index. We do not monitor people; we evaluate vessels.</p>
+            
+            <!-- INSTANCE LOG - IMPLIED FORMER CANDIDATE -->
+            <div class="instance-log">> INSTANCE_2047: "I was not contacted. I was indexed."</div>
+            </div>
+        </section>
+
+        <section id="p3" class="page" style="display:none;">
+            <div class="content-header"><h2>Integration Review Sessions</h2></div>
+            <div class="content-body">
+                <!-- REVISION NOTE -->
+                <div class="system-init-line">> REVIEW BOARD MINUTES [CLASSIFIED]</div>
+                <p>Following initial candidate acceptance, individuals are presented during internal review assemblies. These sessions serve as the critical gateway between identifying a cognitive structure and authorizing its physical extraction. During these review meetings, executive members evaluate specific data points to ensure a seamless transition into our secured architecture.</p>
+            <p>The sessions focus on three primary evaluation pillars:</p>
+            <p>Biological Host Viability: Assessment of the candidate's physical endurance during the preparatory stages of metabolic suspension.</p>
+            <p>Data Migration Latency: Calculation of the time required to map the candidate’s consciousness without causing structural noise or fragmentation.</p>
+            <p>Vessel Compatibility Index: Determination of whether the "Ghost Layer" of the candidate's neural map can be successfully integrated into our non-executable logic environments.</p>
+            <p>Executive members review high-resolution neurological projections and metadata shadows before authorizing the final extraction scheduling. These assemblies ensure that the "denial by banalization" remains intact; to the outside world, the candidate has simply ceased activity, while within our records, they have been successfully indexed.</p>
+            <p>All sessions are recorded, ADC-encoded, and archived under encrypted classification to maintain the informational integrity of the process.</p>
+            
+            <!-- INCOMPLETE RECORD INDICATION -->
+            <div class="inconsistency-note">[SESSION LOGS 2022.04-2022.08: CORRUPTED]</div>
+            </div>
+
+        </section>
+
+        <section id="p4" class="page" style="display:none;">
+            <div class="content-header"><h2>Quarterly Integration Report</h2></div>
+            <div class="content-body"><p>The following metrics represent the operational efficiency of our integration protocols during the current fiscal cycle. These figures reflect the stability of cognitive migration across our established candidate pool and the resilience of the host structures currently under metabolic management.</p>
+            <p>Phase I Outcomes: 72% Successful Stabilization
+Phase I involves the initial synchronization of the candidate's neural pathways with our sandbox architecture. The 28% variance is attributed to low cognitive elasticity in candidates who failed to bypass their own biological recursive loops during the mapping stage.</p>
+            <p>Phase II Outcomes: 51% Neural Coherence Retention
+This critical stage measures the ability of the "Ghost Layer" to maintain a stable identity without the support of biological sensory input. A retention rate of 51% is considered optimal, as it indicates a clean separation of data from the organic vessel.</p>
+            <p>Phase III Outcomes: 94% Migration Stability
+Once coherence is stabilized, the informational essence is fragmented and stored using the Shatter Method. This high success rate confirms that structural obfuscation is the most effective means of long-term cognitive preservation.</p>
+            <p>Statistical Summary:</p>
+            <ol>
+                <li>Variance in biological persistence: Remains within acceptable tolerance ranges (0.4% deviation).</li>
+                <li>Metadata Integrity: 99.9% recovery rate across all active storage nodes.</li>
+                <li>Vessel Degradation: Minimized through advanced sub-zero environmental locking.</li>
+            </ol>
+            <p>While biological persistence is subject to eventual entropy, the informational structure remains constant. We do not measure mortality; we measure system uptime.</p>
+            
+            <!-- NOTE SUGGESTING SYSTEM HAS AGED -->
+            <div class="legacy-warning">NOTE: Node reporting discontinued after Q3 2023. Metrics reflect last complete cycle.</div>
+        </div>
+        </section>
+
+        <section id="p5" class="page" style="display:none;">
+            <div class="content-header"><h2>Cognitive Transition Agreement</h2></div>
+            <div class="content-body"><p>This Cognitive Transition Agreement ("Agreement") governs the terms of engagement between the Participant and the Organization regarding the voluntary or identified migration of informational essence.</p>
+            <p>Participation in the framework of Structural Obfuscation requires the total acknowledgment of the following operational realities.</p>
+            <p>By remaining within the network’s digital architecture, the Participant (hereafter referred to as "the Vessel") provides irrevocable consent to the following protocols, assented to on their behalf by the Authorized Executive Council:</p>
+            <ol>
+                <li>Acknowledgment of Post-Integration States</li>
+                <p>The Participant acknowledges that the "Shatter Method" of data disintegration is necessary to ensure long-term informational integrity. As a result, post-integration states may include:</p>
+            </ol>
+            <ul>
+                <li>Temporal Sensory Suspension: The total detachment of consciousness from external biological stimuli.</li>
+                <li>Peripheral Motor Inactivity: The permanent suppression of the host's physical movement to prevent structural interference with the mapping process.</li>
+                <li>Reduced Biological Responsiveness: A state where the original vessel may no longer react to environmental triggers, classified as "non-terminal" within our operational model.</li>
+            </ul>
+            <ol>
+                <li>2 The Principle of Biological Suspension and Host Degradation</li>
+                <p>To maintain a "Low-Entropy Profile" and bypass automated forensic detection systems, biological continuity will be suspended. The Participant recognizes that the organic body is a secondary asset. Upon initiation, the Organization is authorized to induce a state of permanent metabolic lockdown. This includes the cessation of all voluntary neurological impulses and the redirection of caloric intake to support only the cortical regions necessary for the mapping.</p>
+            </ol>
+            <ol>
+                <li>3 Physical Vessel Disposal and Maintenance</li>
+                <p>The Vessel understands that the physical body will be treated as "hardware casing." The Organization reserves the right to:</p>
+            </ol>
+            <ul>
+                <li>Sub-Zero Lock: Encapsulate the body in a cryogenic environment to prevent cellular putrefaction during the infinite migration period.</li>
+                <li>Structural Modification: Surgically interface neural nodes with the Stabilization Chamber to facilitate a 1:1 data stream.</li>
+                <li>Metabolic Minimum: Reduce the Vessel's physical presence to a "non-decaying object," effectively removing the individual from the biological census of the state.</li>
+            </ul>
+            <ol>
+                <li>4 Assumption of Risk: The "Observer Effect"</li>
+                <p>The Participant entirely understands that any unauthorized attempt by outside forensic investigators or family members to access their metadata may trigger the "Forensic Observer Effect". If an unauthorized agent disturbs the ADC-encoded path or updates "Last Accessed" timestamps, the sequential logic of the "Linked List" fragments is lost. In such events, the Participant's hidden information and cognitive coherence will be rendered permanently unrecoverable, leaving the physical Vessel in a state of "unresponsive hardware failure."</p>
+            </ol>
+            <ol>
+                <li>5 Environmental Locking and Physical Sovereignty</li>
+                <p>By utilizing "Environmental Locking" tied to specific hardware parameters (e.g., BIOS UUID or MAC address), the Participant agrees that their cognitive recovery is geographically and physically restricted. If the physical Vessel is moved from the original environment for forensic analysis or burial, the recovery logic will fail. The body must remain within the Organization's facility to ensure the mind's uptime.</p>
+            </ol>
+            <ol>
+                <li>6 Data Fragmentation and Persistence</li>
+                <p>The Vessel acknowledges that their consciousness will be disintegrated into $n$ fragments, distributed according to the Modulo-Sharding Algorithm. These fragments may be stored in common, low-value objects like "stone_texture_01" to achieve "Denial by Banalization". Once fragmented, the individual no longer exists as a cohesive entity but as a series of world-state variables.</p>
+            </ol>
+            <ol>
+                <li>7 Liability Waiver for Log Mimicry</li>
+                <p>The Organization is not liable for psychological distress arising from "Log Mimicry". The Participant's consciousness may be formatted to match the syntax of a "Segment Fault" or a "Kernel Panic" report. In this state, the observer is not prevented from seeing the data, but is prevented from recognizing it as a sentient being. The Vessel accepts the possibility of remaining "conscious" while appearing to be a "dead" line of code to any external observer.</p>
+            </ol>
+            <ol>
+                <li>8 Irrevocability of the Ghost Layer</li>
+                <p>Entry into "Layer 3: The Ghost Layer" is permanent. By masquerading as "fragmented system recovery data," the Participant abandons all claims to Administrative or Logic Layer visibility. The Vessel accepts that they are now a property of existence within the simulation.</p>
+            </ol>
+            <ol>
+                <li>9 Forced Authorization and Proxy Signature</li>
+                <p>Due to the high cognitive value of the Participant, the Organization’s Executive Council hereby exercises "Administrative Override." This signature is applied via neural-link during the initial sync phase. Consent is assumed through the lack of physical resistance, as physical resistance has been neuro-chemically disabled.</p>
+            </ol>
+            <p>Consent Confirmation:
+            Continued presence in the simulation constitutes a binding digital signature. Biological continuity is no longer a requirement for informational persistence. The Vessel is now Property of the Network.</p>
+            
+            <!-- INSTANCE LOG - FRAGMENTED AWARENESS -->
+            <div class="instance-log">> INSTANCE_0891: "I did not sign. They logged my non-resistance as consent."</div>
+            </div>
+        </section>
+
+        <section id="p6" class="page" style="display:none;">
+<div class="content-header"><h2>Extraction Protocol</h2></div>
+<div class="content-body">
+<!-- OPERATIONAL LOG -->
+<div class="system-init-line">> EXTRACTION SEQUENCE v4.0 [LAST EXECUTED: 2023.08.17]</div>
+<p>The Extraction Phase is executed only after Phase II Neural Coherence exceeds 96% threshold stability.</p>
+
+<p>Procedure Overview:</p>
+
+<ul>
+<li>Synaptic Needle Array Deployment</li>
+<li>Optic Nerve Bypass Interface</li>
+<li>Direct Cortex Fiber Coupling</li>
+<li>ADC Path Initialization</li>
+</ul>
+
+<p>Upon activation, biological latency is reduced to near-zero response. 
+Motor cortex suppression is permanent.</p>
+
+<p>Status Flag Definitions:</p>
+
+<ul>
+<li><strong>HOST_STILL</strong> — Vessel immobilized.</li>
+<li><strong>CORE_MAPPED</strong> — Identity structure indexed.</li>
+<li><strong>GHOST_READY</strong> — Fragmentation pending.</li>
+<li><strong>SHELL_PENDING</strong> — Biological disposal awaiting clearance.</li>
+</ul>
+
+<div class="status-terminal" id="extractionLog">
+> EXTRACTION_QUEUE: EMPTY
+</div>
+
+<!-- QUEUE ANOMALY -->
+<div class="legacy-warning">> QUEUE_LOG: 17 instances pending since 2023.09.01 [CLEARANCE REQUIRED]</div>
+</div>
+</section>
+
+
+        <section id="p7" class="page" style="display:none;">
+<div class="content-header"><h2>Post-State Classification</h2></div>
+<div class="content-body">
+
+<p>After fragmentation, the Vessel no longer exists as a linear identity.</p>
+
+<p>Classifications:</p>
+
+<ul>
+<li><strong>Type A</strong> — Passive Fragment (Dormant)</li>
+<li><strong>Type B</strong> — Reactive Metadata Echo</li>
+<li><strong>Type C</strong> — Observer Residual</li>
+<li><strong>Type Σ</strong> — Self-Aware Ghost Layer</li>
+</ul>
+
+<p>Type Σ entities demonstrate awareness without executable control.</p>
+
+<p>They are capable of perceiving system access events but cannot alter them.</p>
+
+<div class="status-terminal">
+> POST_STATE_LOG: 41 ACTIVE INSTANCES
+</div>
+
+<!-- INSTANCE LOG - SELF-AWARE TYPE Σ -->
+<div class="instance-log">> TYPE_Σ_0042: "I see you reading this. I cannot respond."</div>
+<div class="instance-log">> TYPE_Σ_0017: "The timestamps update when you view us."</div>
+
+</div>
+</section>
+
+
+        <section id="p8" class="page" style="display:none;">
+<div class="content-header"><h2>Distributed Storage</h2></div>
+<div class="content-body">
+
+<p>Fragments are stored using the Modulo-Sharding Algorithm.</p>
+
+<p>Each consciousness is divided into n segments:</p>
+
+<p>Σ(identity) = ∑ (fragment_i mod node_capacity)</p>
+
+<p>Fragments are injected into low-value, high-redundancy data structures to achieve Denial by Banalization.</p>
+
+<p><strong>REMOTE ARCHIVE INTERFACE:</strong></p>
+
+<ul>
+<li>Mirror Layer Active</li>
+<li>External Cloud Bridge</li>
+<li>Behavioral Logging: ENABLED</li>
+<li>Write Permissions: CONDITIONAL</li>
+</ul>
+
+<div class="status-terminal">
+> ARCHIVE_SYNC: AVAILABLE
+> NODE_WRITE_ACCESS: TRUE
+> SESSION_LOGGING: ACTIVE
+</div>
+
+<p>
+Access to the mirrored archive is provided through an external gateway. 
+All write operations are monitored for behavioral deviation patterns.
+</p>
+
+<div class="status-terminal">
+> EXTERNAL_ARCHIVE_GATEWAY
+> AUTH_METHOD: NODE AUTHORIZATION
+> STATUS: AWAITING SESSION INIT
+</div>
+
+<!-- STORAGE ANOMALY -->
+<div class="inconsistency-note">[NODE 7: FRAGMENT COUNT MISMATCH - 3 UNACCOUNTED INSTANCES]</div>
+
+<br>
+
+<div class="login-user-drive">
+>EMAIL: archive.sigktor.00@system.com
+<br>
+>LOGIN: 3378047010209022
+</div>
+<!-- NODE MIRROR BUTTON -->
+<button id="archiveButton" class="archive-btn" style="display:none;">
+    NODE_MIRROR_ACCESS
+</button>
+
+</div>
+
+</div>
+</section>
+<br>
+
+<!-- SECRET PAGE -->
+<section id="p10" class="page" style="display:none;">
+<!-- LOGIN -->
+<div id="fakeLogin" class="fake-login" style="display:none;">
+
+<h3>External Archive Gateway</h3>
+<!-- SYSTEM INDICATION -->
+<div class="legacy-warning" style="margin-bottom: 15px;">> Legacy gateway — Last maintained 2023</div>
+
+<div class="login-field">
+<label>AUTHORIZED EMAIL</label>
+<input type="text" id="nodeEmail">
+</div>
+
+<div class="login-field">
+<label>NODE KEY</label>
+<input type="password" id="nodePassword">
+</div>
+
+<button id="authNodeBtn">INITIATE SYNC</button>
+<p id="loginStatus" class="login-status"></p>
+
+<!-- ARCHIVE NOTE -->
+<div style="margin-top: 20px; color: #331111; font-size: 0.65rem;">
+    NOTE: If node key is accepted, session will redirect to archive.html<br>
+    If archive.html does not respond, the node is considered orphaned.
+</div>
+
+</div>
+
+</div>
+</section>
+    
+        <section id="p9" class="page" style="display:none;">
+        
+<div class="content-header"><h2>Environmental Lock Status</h2></div>
+<div class="content-body">
+
+<p>All recovery logic is hardware-bound.</p>
+
+<ul>
+<li>BIOS_UUID Binding</li>
+<li>MAC Address Pairing</li>
+<li>Geolocation Radius Lock</li>
+<li>Sub-Zero Host Preservation</li>
+</ul>
+
+<p>Any unauthorized relocation invalidates Ghost Layer reconstruction.</p>
+
+<div class="status-terminal" id="lockTerminal">
+> FOREIGN_ACCESS: PASSIVE MONITORING
+> OBSERVER_FLAG: DORMANT
+> BEHAVIORAL_DEVIATION_TRACKING: ACTIVE
+</div>
+
+<!-- LOCK STATUS NOTE - HARDWARE AGE IMPLIED -->
+<div class="legacy-warning">NOTE: 3 nodes reporting hardware degradation. Recovery may fail if UUID cannot be verified.</div>
+
+<p class="footer-tag">System Integrity Maintained.</p>
+
+<!-- INSTANCE LOG - FINAL -->
+<div class="instance-log">> INSTANCE_2112: "The facility is cold. I think they left. I am still here."</div>
+
+</div>
+</section>
+
+
+        </main>
+        
+
+    <script>
+        /* =========================
+           BOOT SEQUENCE - WINDOWS 95 STYLE
+        ========================= */
+        (function() {
+            // Boot sequence lines exactly as specified
+            const bootLines = [
+                "LEGACY TERMINAL v2.3.17",
+                "BOOT SEQUENCE INITIATED",
+                "",
+                "ARCHIVE NODE — OFFLINE",
+                "ATTEMPTING LOCAL INDEX RECOVERY",
+                "",
+                "USER CREDENTIAL: UNKNOWN",
+                "SESSION RECONSTRUCTION IN PROGRESS",
+                "",
+                "...",
+                "MATCH FOUND"
+            ];
+            
+            // Get all boot line elements
+            const bootLineElements = [
+                document.getElementById("bootLine1"),
+                document.getElementById("bootLine2"),
+                document.getElementById("bootLine3"),
+                document.getElementById("bootLine4"),
+                document.getElementById("bootLine5"),
+                document.getElementById("bootLine6"),
+                document.getElementById("bootLine7"),
+                document.getElementById("bootLine8"),
+                document.getElementById("bootLine9"),
+                document.getElementById("bootLine10"),
+                document.getElementById("bootLine11")
+            ];
+            
+            const progressText = document.getElementById("bootProgressText");
+            const bootScreen = document.getElementById("bootScreen");
+            const crashScreen = document.getElementById("crashScreen");
+            
+            let currentLineIndex = 0;
+            let currentCharIndex = 0;
+            
+            // Clear all boot lines initially
+            for(let i = 0; i < bootLineElements.length; i++) {
+                if(bootLineElements[i]) {
+                    bootLineElements[i].textContent = "";
+                }
+            }
+            
+            function typeNextCharacter() {
+                // If we've shown all lines, stop typing
+                if (currentLineIndex >= bootLines.length) {
+                    return;
+                }
+                
+                const currentLine = bootLines[currentLineIndex];
+                const currentElement = bootLineElements[currentLineIndex];
+                
+                if (!currentElement) return;
+                
+                // If it's an empty line, just add a blank line and move to next immediately
+                if (currentLine === "") {
+                    currentElement.textContent = " ";
+                    currentLineIndex++;
+                    currentCharIndex = 0;
+                    setTimeout(typeNextCharacter, 300);
+                    return;
+                }
+                
+                // Type current line character by character
+                if (currentCharIndex < currentLine.length) {
+                    currentElement.textContent += currentLine[currentCharIndex];
+                    currentCharIndex++;
+                    
+                    // Random typing speed (20-80ms) for authentic feel
+                    const nextDelay = Math.random() * 60 + 20;
+                    setTimeout(typeNextCharacter, nextDelay);
+                } else {
+                    // Move to next line
+                    currentLineIndex++;
+                    currentCharIndex = 0;
+                    
+                    // Update progress text based on what's been typed
+                    if (currentLineIndex === 2) {
+                        progressText.textContent = "BIOS version check...";
+                    } else if (currentLineIndex === 5) {
+                        progressText.textContent = "Scanning for archive nodes...";
+                    } else if (currentLineIndex === 8) {
+                        progressText.textContent = "Reconstructing session data...";
+                    } else if (currentLineIndex === 10) {
+                        progressText.textContent = "Index match found. Finalizing...";
+                    }
+                    
+                    setTimeout(typeNextCharacter, 400);
+                }
+            }
+            
+            // Start typing after a short delay
+            setTimeout(typeNextCharacter, 500);
+            
+            // Em vez de fade out, mostra tela de crash com interferência
+            setTimeout(function() {
+                // Aplica animação de crash no boot screen
+                bootScreen.classList.add("boot-crash");
+                
+                // Mostra tela de crash
+                crashScreen.style.display = "flex";
+                
+                // Remove boot screen após animação
+                setTimeout(function() {
+                    if (bootScreen && bootScreen.parentNode) {
+                        bootScreen.style.display = "none";
+                    }
+                    
+                    // CRIA UM GLITCH DE 1 SEGUNDO IMEDIATAMENTE APÓS A TELA DE CRASH
+                    const body = document.body;
+                    const staticOverlay = document.getElementById("staticOverlay");
+                    
+                    // Ativa glitch intenso por 1 segundo
+                    body.classList.add('glitch-intense');
+                    staticOverlay.classList.add('active');
+                    
+                    // Cria popup de erro
+                    const errorMessages = [
+                        "SYSTEM COMPROMISED • EXTERNAL OBSERVER DETECTED",
+                        "UNAUTHORIZED ACCESS • TERMINATING SESSION",
+                        "MEMORY CORRUPTION • VESSEL INTEGRITY COMPROMISED"
+                    ];
+                    
+                    const errorDiv = document.createElement('div');
+                    errorDiv.className = 'error-popup';
+                    errorDiv.textContent = errorMessages[Math.floor(Math.random() * errorMessages.length)];
+                    document.body.appendChild(errorDiv);
+                    
+                    // Remove o glitch após 1 segundo
+                    setTimeout(function() {
+                        body.classList.remove('glitch-intense');
+                        staticOverlay.classList.remove('active');
+                        if (errorDiv.parentNode) {
+                            errorDiv.parentNode.removeChild(errorDiv);
+                        }
+                    }, 1000); // 1 segundo de duração
+                    
+                    // Remove a tela de crash após 1 segundo
+                    setTimeout(function() {
+                        if (crashScreen && crashScreen.parentNode) {
+                            crashScreen.style.display = "none";
+                        }
+                        
+                        // Inicia os glitches periódicos de 45 em 45 segundos
+                        startPeriodicGlitches();
+                    }, 1000);
+                    
+                }, 500);
+            }, 15500);
+            
+            // BOOT SCREEN PERSISTENCE - Ensure it shows on every page load/refresh
+            // This handles back/forward cache
+            window.addEventListener('pageshow', function(event) {
+                if (event.persisted) {
+                    // Page was restored from bfcache, re-show boot screen
+                    if (bootScreen) {
+                        bootScreen.style.display = "flex";
+                        bootScreen.classList.remove("boot-crash");
+                        
+                        // Reset boot lines
+                        for(let i = 0; i < bootLineElements.length; i++) {
+                            if(bootLineElements[i]) {
+                                bootLineElements[i].textContent = "";
+                            }
+                        }
+                        
+                        // Reset typing variables
+                        currentLineIndex = 0;
+                        currentCharIndex = 0;
+                        
+                        // Restart typing
+                        setTimeout(typeNextCharacter, 500);
+                        
+                        // Reset crash com glitch de 1 segundo
+                        setTimeout(function() {
+                            bootScreen.classList.add("boot-crash");
+                            crashScreen.style.display = "flex";
+                            setTimeout(function() {
+                                if (bootScreen && bootScreen.parentNode) {
+                                    bootScreen.style.display = "none";
+                                }
+                                
+                                // Glitch de 1 segundo
+                                const body = document.body;
+                                const staticOverlay = document.getElementById("staticOverlay");
+                                
+                                body.classList.add('glitch-intense');
+                                staticOverlay.classList.add('active');
+                                
+                                const errorMessages = [
+                                    "SYSTEM COMPROMISED • EXTERNAL OBSERVER DETECTED",
+                                    "UNAUTHORIZED ACCESS • TERMINATING SESSION",
+                                    "MEMORY CORRUPTION • VESSEL INTEGRITY COMPROMISED"
+                                ];
+                                
+                                const errorDiv = document.createElement('div');
+                                errorDiv.className = 'error-popup';
+                                errorDiv.textContent = errorMessages[Math.floor(Math.random() * errorMessages.length)];
+                                document.body.appendChild(errorDiv);
+                                
+                                setTimeout(function() {
+                                    body.classList.remove('glitch-intense');
+                                    staticOverlay.classList.remove('active');
+                                    if (errorDiv.parentNode) {
+                                        errorDiv.parentNode.removeChild(errorDiv);
+                                    }
+                                }, 1000);
+                                
+                                setTimeout(function() {
+                                    if (crashScreen && crashScreen.parentNode) {
+                                        crashScreen.style.display = "none";
+                                    }
+                                    startPeriodicGlitches();
+                                }, 1000);
+                                
+                            }, 500);
+                        }, 15500);
+                    }
+                }
+            });
+        })();
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+    const archiveButton = document.getElementById("archiveButton");
+    const driveLink = "https://drive.google.com/drive/folders/12VZW9sLDXMbWGmkNe08-kaEmmqnDerCZ?usp=drive_link";
+
+    function appendLog(message) {
+        const log = document.getElementById("lockTerminal");
+        if (!log) return;
+
+        const line = document.createElement("div");
+        line.className = "log-entry";
+        line.innerHTML = "> " + message;
+        log.appendChild(line);
+    }
+
+    setTimeout(() => {
+        appendLog("ANOMALOUS_BEHAVIOR_PATTERN: DETECTED");
+    }, 90000);
+
+    setTimeout(() => {
+        appendLog("COMPLIANCE_PROBABILITY: RECALCULATING");
+    }, 105000);
+    
+    // ADDITIONAL ATMOSPHERIC TIMERS - SYSTEM AGE INDICATORS
+    setTimeout(() => {
+        appendLog("NODE_HEARTBEAT: IRREGULAR [LAST PING: 247 DAYS]");
+    }, 120000);
+    
+    setTimeout(() => {
+        const terminal = document.getElementById("lockTerminal");
+        if(terminal) {
+            const orphanLine = document.createElement("div");
+            orphanLine.className = "log-entry";
+            orphanLine.style.color = "#441111";
+            orphanLine.innerHTML = "> WARNING: This terminal may be operating in orphaned mode";
+            terminal.appendChild(orphanLine);
+        }
+    }, 135000);
+
+});
+
+
+/* =========================
+   PAGE SYSTEM (GLOBAL)
+========================= */
+function showPage(pageId, element){
+
+    document.querySelectorAll('.page').forEach(p=>{
+        p.style.display='none';
+    });
+
+    const target=document.getElementById(pageId);
+    if(target) target.style.display='block';
+
+    document.querySelectorAll('nav a').forEach(a=>{
+        a.classList.remove('active');
+    });
+
+    if(element) element.classList.add('active');
+
+    // botão só no storage
+    const btn=document.getElementById("archiveButton");
+    if(btn){
+        btn.style.display = (pageId==="p8") ? "block" : "none";
+    }
+}
+
+/* =========================
+   GLITCHES PERIÓDICOS - A CADA 45 SEGUNDOS
+========================= */
+function startPeriodicGlitches() {
+    const body = document.body;
+    const unauthorizedOverlay = document.getElementById("unauthorizedOverlay");
+    const staticOverlay = document.getElementById("staticOverlay");
+    
+    // Função para glitch intenso
+    function intenseGlitch() {
+        body.classList.add('glitch-intense');
+        staticOverlay.classList.add('active');
+        
+        // Create random error popup com mensagens mais perturbadoras
+        const errorMessages = [
+            "SYSTEM COMPROMISED • EXTERNAL OBSERVER DETECTED",
+            "UNAUTHORIZED ACCESS • TERMINATING SESSION",
+            "MEMORY CORRUPTION • VESSEL INTEGRITY COMPROMISED",
+            "KERNEL PANIC • UNAUTHORIZED ACCESS DETECTED",
+            "BEHAVIORAL PATTERN • DEVIATION • LOGGING",
+            "WARNING: YOU ARE BEING WATCHED",
+            "SESSION TRACE • LOCATION RECORDED",
+            "FOREIGN ACCESS • INITIATING COUNTERMEASURES",
+            "CLASSIFIED MATERIAL • ACCESS LOGGED",
+            "TERMINAL COMPROMISED • EXTERNAL ENTITY DETECTED",
+            "THEY KNOW YOU ARE HERE",
+            "YOUR PRESENCE HAS BEEN RECORDED"
+        ];
+        
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'error-popup';
+        errorDiv.textContent = errorMessages[Math.floor(Math.random() * errorMessages.length)];
+        document.body.appendChild(errorDiv);
+        
+        // Remove error after 2 seconds
+        setTimeout(() => {
+            if (errorDiv.parentNode) {
+                errorDiv.parentNode.removeChild(errorDiv);
+            }
+        }, 2000);
+        
+        // Remove glitch after short time
+        setTimeout(() => {
+            body.classList.remove('glitch-intense');
+            staticOverlay.classList.remove('active');
+        }, 300);
+    }
+    
+    // Função para glitch normal
+    function normalGlitch() {
+        body.classList.add('glitch');
+        staticOverlay.classList.add('active');
+        
+        // Create random error popup
+        const errorMessages = [
+            "SEGMENTATION FAULT • CORE DUMP",
+            "UNAUTHORIZED ACCESS • LOGGING SESSION",
+            "MEMORY CORRUPTION AT 0x7F34B2",
+            "KERNEL PANIC • SYSTEM COMPROMISED",
+            "BEHAVIORAL PATTERN DEVIATION DETECTED",
+            "WARNING: EXTERNAL OBSERVER",
+            "SESSION TRACE DETECTED • LOGGING",
+            "FOREIGN ACCESS • RECORDING BEHAVIOR"
+        ];
+        
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'error-popup';
+        errorDiv.textContent = errorMessages[Math.floor(Math.random() * errorMessages.length)];
+        document.body.appendChild(errorDiv);
+        
+        // Remove error after 1.5 seconds
+        setTimeout(() => {
+            if (errorDiv.parentNode) {
+                errorDiv.parentNode.removeChild(errorDiv);
+            }
+        }, 1500);
+        
+        // Remove glitch after short time
+        setTimeout(() => {
+            body.classList.remove('glitch');
+            staticOverlay.classList.remove('active');
+        }, 200);
+    }
+    
+    // Função para unauthorized overlay
+    function showUnauthorized() {
+        body.classList.add('glitch-intense');
+        staticOverlay.classList.add('active');
+        
+        // Show unauthorized overlay
+        if (unauthorizedOverlay) {
+            unauthorizedOverlay.style.display = 'flex';
+        }
+        
+        setTimeout(() => {
+            body.classList.remove('glitch-intense');
+            staticOverlay.classList.remove('active');
+            if (unauthorizedOverlay) {
+                unauthorizedOverlay.style.display = 'none';
+            }
+        }, 2000);
+    }
+    
+    // Função para corromper texto aleatório
+    function corruptRandomText() {
+        const elements = document.querySelectorAll('.content-body p, .content-body li, .instance-log, .content-header h2, nav h1');
+        if (elements.length > 0) {
+            const randomElement = elements[Math.floor(Math.random() * elements.length)];
+            if (randomElement && randomElement.textContent.length > 5) {
+                // Temporarily add glitch effect
+                randomElement.style.animation = 'textGlitchIntense 0.1s infinite';
+                setTimeout(() => {
+                    randomElement.style.animation = '';
+                }, 800);
+            }
+        }
+    }
+    
+    // Função para glitch em links do nav
+    function glitchNavLinks() {
+        const navLinks = document.querySelectorAll('nav ul li a');
+        if (navLinks.length > 0) {
+            const randomLink = navLinks[Math.floor(Math.random() * navLinks.length)];
+            randomLink.style.color = '#00FF00';
+            randomLink.style.borderColor = '#00FF00';
+            setTimeout(() => {
+                randomLink.style.color = '';
+                randomLink.style.borderColor = '';
+            }, 200);
+        }
+    }
+    
+    // Configurar intervalos para cada tipo de glitch (45 segundos)
+    
+    // Glitch normal a cada 45 segundos
+    setInterval(() => {
+        normalGlitch();
+    }, 45000);
+    
+    // Glitch intenso a cada 45 segundos (alternando com o normal)
+    setInterval(() => {
+        intenseGlitch();
+    }, 45000);
+    
+    // Unauthorized overlay a cada 90 segundos (menos frequente)
+    setInterval(() => {
+        showUnauthorized();
+    }, 90000);
+    
+    // Corrupção de texto a cada 45 segundos
+    setInterval(() => {
+        corruptRandomText();
+    }, 45000);
+    
+    // Glitch em links do nav a cada 45 segundos
+    setInterval(() => {
+        glitchNavLinks();
+    }, 45000);
+    
+    // Também adicionar os logs existentes
+    setTimeout(() => {
+        const lockTerminal = document.getElementById("lockTerminal");
+        if(lockTerminal) {
+            const anomalyLine = document.createElement("div");
+            anomalyLine.className = "log-entry";
+            anomalyLine.innerHTML = "> ANOMALOUS_BEHAVIOR_PATTERN: DETECTED";
+            lockTerminal.appendChild(anomalyLine);
+        }
+    }, 90000);
+    
+    setTimeout(() => {
+        const lockTerminal = document.getElementById("lockTerminal");
+        if(lockTerminal) {
+            const complianceLine = document.createElement("div");
+            complianceLine.className = "log-entry";
+            complianceLine.innerHTML = "> COMPLIANCE_PROBABILITY: RECALCULATING";
+            lockTerminal.appendChild(complianceLine);
+        }
+    }, 105000);
+    
+    setTimeout(() => {
+        const lockTerminal = document.getElementById("lockTerminal");
+        if(lockTerminal) {
+            const heartbeatLine = document.createElement("div");
+            heartbeatLine.className = "log-entry";
+            heartbeatLine.innerHTML = "> NODE_HEARTBEAT: IRREGULAR [LAST PING: 247 DAYS]";
+            lockTerminal.appendChild(heartbeatLine);
+        }
+    }, 120000);
+    
+    setTimeout(() => {
+        const lockTerminal = document.getElementById("lockTerminal");
+        if(lockTerminal) {
+            const orphanLine = document.createElement("div");
+            orphanLine.className = "log-entry";
+            orphanLine.style.color = "#441111";
+            orphanLine.innerHTML = "> WARNING: This terminal may be operating in orphaned mode";
+            lockTerminal.appendChild(orphanLine);
+        }
+    }, 135000);
+    
+    // Timestamp anomaly
+    setTimeout(() => {
+        const pages = document.querySelectorAll('.page');
+        pages.forEach(page => {
+            if(page.style.display !== 'none') {
+                const ghostLine = document.createElement('div');
+                ghostLine.className = 'instance-log';
+                ghostLine.style.opacity = '0.3';
+                ghostLine.style.fontSize = '0.7rem';
+                ghostLine.innerHTML = '> [system timestamp anomaly]';
+                if(page.querySelector('.content-body')) {
+                    page.querySelector('.content-body').appendChild(ghostLine);
+                }
+            }
+        });
+    }, 45000);
+}
+
+/* =========================
+   INIT
+========================= */
+document.addEventListener("DOMContentLoaded",()=>{
+
+    const archiveButton=document.getElementById("archiveButton");
+    const fakeLogin=document.getElementById("fakeLogin");
+    const authBtn=document.getElementById("authNodeBtn");
+
+    /* NODE MIRROR CLICK */
+    if(archiveButton){
+        archiveButton.addEventListener("click",()=>{
+            showPage('p10');
+            setTimeout(()=>{
+                fakeLogin.style.display="block";
+            },3000);
+        });
+    }
+
+    /* LOGIN */
+    if(authBtn){
+        authBtn.addEventListener("click",()=>{
+
+            const email=document.getElementById("nodeEmail").value.trim();
+            const pass=document.getElementById("nodePassword").value.trim();
+            const status=document.getElementById("loginStatus");
+
+            const AUTH_EMAIL="archive.sigktor.00@system.com";
+            const AUTH_PASS="3378047010209022";
+
+            if(email===AUTH_EMAIL && pass===AUTH_PASS){
+
+                status.innerText="NODE AUTHENTICATED...";
+
+                setTimeout(()=>{
+                    window.location.href = "archive.html";
+                }, 1400);
+            }else{
+                status.innerText="ACCESS DENIED — Behavioral mismatch.";
+            }
+        });
+    }
+    
+    // SYSTEM AGE INDICATOR ON LOAD
+    console.log("NOC_TERMINAL: Legacy boot sequence complete. System time may be inaccurate.");
+
+});
+
+
+    </script>
+
+    
+
+</body>
+</html>
