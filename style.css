@@ -618,7 +618,6 @@
     font-style: italic;
 }
 
-/* BOOT SCREEN - WINDOWS 95/98 STYLE */
 .boot-screen {
     position: fixed;
     top: 0;
@@ -640,7 +639,8 @@
 .boot-content {
     width: 100%;
     max-width: 90%;
-    border: 2px solid #ff000000;
+    border-top: 2px solid #ff0000;
+    border-bottom: 2px solid #ff0000;
     background-color: #000;
     padding: 30px;
     box-shadow: 10px 10px 0 rgba(255,0,0,0.1);
