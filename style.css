@@ -638,9 +638,9 @@
 }
 
 .boot-content {
-    width: 600px;
+    width: 100%;
     max-width: 90%;
-    border: 2px solid #FF0000;
+    border: 2px solid #ff000000;
     background-color: #000;
     padding: 30px;
     box-shadow: 10px 10px 0 rgba(255,0,0,0.1);
